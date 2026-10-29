@@ -1,10 +1,8 @@
-#
-# Copyright (C) 2009-2020 the sqlparse authors and contributors
-# <see AUTHORS file>
+# Copyright (C) 2008 Andi Albrecht, albrecht.andi@gmail.com
 #
 # This module is part of python-sqlparse and is released under
-# the BSD License: https://opensource.org/licenses/BSD-3-Clause
-#
+# the BSD License: http://www.opensource.org/licenses/bsd-license.php.
+
 # The Token implementation is based on pygment's token system written
 # by Georg Brandl.
 # http://pygments.org/
@@ -15,21 +13,31 @@
 class _TokenType(tuple):
     parent = None
 
-    def __contains__(self, item):
-        return item is not None and (self is item or item[:len(self)] == self)
+    def split(self):
+        buf = []
+        node = self
+        while node is not None:
+            buf.append(node)
+            node = node.parent
+        buf.reverse()
+        return buf
 
-    def __getattr__(self, name):
-        # don't mess with dunder
-        if name.startswith('__'):
-            return super().__getattr__(self, name)
-        new = _TokenType(self + (name,))
-        setattr(self, name, new)
+    def __contains__(self, val):
+        return val is not None and (self is val or val[:len(self)] == self)
+
+    def __getattr__(self, val):
+        if not val or not val[0].isupper():
+            return tuple.__getattribute__(self, val)
+        new = _TokenType(self + (val,))
+        setattr(self, val, new)
         new.parent = self
         return new
 
+    def __hash__(self):
+        return hash(tuple(self))
+
     def __repr__(self):
-        # self can be False only if its the `root` i.e. Token itself
-        return 'Token' + ('.' if self else '') + '.'.join(self)
+        return 'Token' + (self and '.' or '') + '.'.join(self)
 
 
 Token = _TokenType()
@@ -53,13 +61,12 @@ Operator = Token.Operator
 Comparison = Operator.Comparison
 Wildcard = Token.Wildcard
 Comment = Token.Comment
-Assignment = Token.Assignment
+Assignment = Token.Assignement
 
 # Generic types for non-source code
 Generic = Token.Generic
-Command = Generic.Command
 
-# String and some others are not direct children of Token.
+# String and some others are not direct childs of Token.
 # alias them:
 Token.Token = Token
 Token.String = String
@@ -68,4 +75,9 @@ Token.Number = Number
 # SQL specific tokens
 DML = Keyword.DML
 DDL = Keyword.DDL
-CTE = Keyword.CTE
+Command = Keyword.Command
+
+Group = Token.Group
+Group.Parenthesis = Token.Group.Parenthesis
+Group.Comment = Token.Group.Comment
+Group.Where = Token.Group.Where
