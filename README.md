@@ -3,7 +3,7 @@ SqlBeautifier
 
 This is a SQL formatter plugin for **Sublime Text 4** using [python-sqlparse](https://github.com/andialbrecht/sqlparse).
 
-*Note: This is a highly optimized fork specifically aimed at modernizing the codebase for Sublime Text 4, utilizing Python 3.8 and removing legacy support for older Sublime Text versions.*
+*Note: This is a highly optimized fork of the [original SqlBeautifier](https://github.com/zsong/SqlBeautifier) specifically aimed at modernizing the codebase for Sublime Text 4, utilizing Python 3.8 and removing legacy support for older Sublime Text versions.*
 
 Enjoy!
 
